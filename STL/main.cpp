@@ -9,8 +9,8 @@
 
 template<typename T>void vector_properties(const std::vector<T>& vec);
 template<typename it> void print(it begin, it end);
-template<typename it> std::forward_list<int>::iterator position(it begin, it end, int index);
-template<typename it> int size(it begin, it end);
+template<typename it> int size_forward_list(it begin, it end);
+
 
 //#define STL_ARRAY
 //#define STL_VECTOR
@@ -63,13 +63,13 @@ void main()
 	//vector_properties(d_vec);
 
 	int index;
-	int count;
+	int beg;
 	int value;
 	std::cout << "Enter index added value: "; std::cin >> index;
-	std::cout << "Enter count added values: "; std::cin >> count;
+	std::cout << "Enter count added values: "; std::cin >> beg;
 	std::cout << "Enter value added: "; std::cin >> value;
 	//std::vector<int>::iterator it;
-	//vec.insert(vec.begin() + index, count, value);
+	//vec.insert(vec.begin() + index, beg, value);
 	vec.insert(vec.begin() + 8, vec.begin() + 3, vec.begin() + 7);
 	vec.insert(vec.begin() + 5, { 1024, 2048, 3072 });
 	//for (int i : vec) std::cout << i << tab;
@@ -135,26 +135,24 @@ void main()
 
 	std::cout << delimitr;
 
-	std::forward_list<int>::iterator it = forward_list.begin();
 	int index;
 	int value;
+	int size = size_forward_list(forward_list.cbegin(), forward_list.cend());
 	std::cout << "Enter index added value: "; std::cin >> index;
 	std::cout << "Enter added value: "; std::cin >> value;
 
-	int size = 0; for (int i : forward_list)size++;
-
+	std::forward_list<int>::iterator it;
 	if (index == 0) forward_list.push_front(value);
-	else if (index > size)
-	{
-		std::cerr << "Индекс вышел за пределы списка, добавляю в конец списка" << std::endl;
-		for (int i = 0; i < size - 1; i++) ++it;
-		forward_list.insert_after(it, value);
-	}
 	else
 	{
-		for (int i = 0; i < index - 1; i++) ++it;
+		int count = 0;
+		for (it = forward_list.before_begin(); it != forward_list.end(); ++it, count++)
+		{
+			if (count == (index < size? index: size)) break; //Условие потому что если индекс больше размера списка, дойдем до end
+		}
 		forward_list.insert_after(it, value);
 	}
+
 	print(forward_list.cbegin(), forward_list.cend());
 	std::cout << delimitr;
 #endif // STL_FORWARD_LIST
@@ -171,23 +169,9 @@ template<typename it> void print(it begin, it end)
 {
 	for (; begin != end; ++begin)std::cout << *begin << tab; std::cout << std::endl;
 }
-template<typename it> int size(it begin, it end)
+template<typename it> int size_forward_list(it begin, it end)
 {
-	int size = 0; for (; begin != end; ++begin)size++;
+	int size = 0;
+	for (; begin != end; ++begin, size++);
 	return size;
-}
-template<typename it> std::forward_list<int>::iterator position(it begin, it end, int index)
-{
-	int size = size(begin, end);
-	if (index > size)
-	{
-		std::cerr << "Индекс вышел за пределы списка, добавляю в конец списка" << std::endl;
-		for (int i = 0; i < size - 1; i++) ++it;
-		return it;
-	}
-	else
-	{
-		for (int i = 0; i < index - 1; i++) ++it;
-		return it;
-	}
 }
