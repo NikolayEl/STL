@@ -148,7 +148,7 @@ void main()
 		int count = 0;
 		for (it = forward_list.before_begin(); it != forward_list.end(); ++it, count++)
 		{
-			if (count == (index < size? index: size)) break; //Условие потому что если индекс больше размера списка, дойдем до end
+			if (count == (index < size? index: size)) break; //Условие потому что если индекс больше размера списка, дойдем до end(nullptr)
 		}
 		forward_list.insert_after(it, value);
 	}
