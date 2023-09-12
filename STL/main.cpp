@@ -1,14 +1,17 @@
 #include<iostream>
 #include<array>
 #include<vector>
+#include<list>
 
 #define tab "\t"
 #define delimitr "\n------------------------------------------------------------------------------------------\n"
 
 template<typename T>void vector_properties(const std::vector<T>& vec);
+template<typename it> void print(it begin, it end);
 
 //#define STL_ARRAY
-#define STL_VECTOR
+//#define STL_VECTOR
+#define STL_LIST
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -19,6 +22,7 @@ void main()
 	for (int i = 0; i < arr.size(); i++)std::cout << arr[i] << tab;
 	for (int i : arr) std::cout << i << tab;
 	std::cout << std::endl;
+	//print(arr.cbegin(), arr.cend());
 
 #endif // STL_ARRAY
 
@@ -75,7 +79,51 @@ void main()
 	std::cout << "Enter index erase value: "; std::cin >> index2;
 	vec.erase(vec.begin() + index);
 	for (int i : vec) std::cout << i << tab;
+	std::cout << "Exam print:" << std::endl;
+	print(vec.cbegin(), vec.cend());
 #endif // STL_VECTOR
+#ifdef STL_LIST
+	std::list<int> list = { 3, 5, 8, 13, 21, 34 };
+	print(list.cbegin(), list.cend());
+	std::cout << delimitr;
+
+	int index;
+	int value;
+	std::list<int>::iterator it;
+	std::cout << "Enter index added value: "; std::cin >> index;
+	std::cout << "Enter value: "; std::cin >> value;
+	if (index < list.size() / 2)
+	{
+		it = list.begin();
+		for (int i = 0; i < index; i++) ++it;
+	}
+	else
+	{
+		it = list.end();
+		for (int i = list.size(); i > index; i--) --it;
+	}
+	list.insert(it, value);
+	print(list.cbegin(), list.cend());
+	std::cout << delimitr;
+
+	int index2;
+	std::cout << "Enter index erased value: "; std::cin >> index2;
+	if (index2 < list.size() / 2)
+	{
+		it = list.begin();
+		for (int i = 0; i < index2; i++) ++it;
+	}
+	else
+	{
+		it = list.end();
+		for (int i = list.size(); i > index2; i--) --it;
+	}
+	list.erase(it);
+	print(list.cbegin(), list.cend());
+	
+
+#endif // STL_LIST
+
 
 }
 template<typename T>void vector_properties(const std::vector<T>& vec)
@@ -83,4 +131,8 @@ template<typename T>void vector_properties(const std::vector<T>& vec)
 	std::cout << "Size:      " << vec.size() << std::endl;
 	std::cout << "MaxSize:   " << vec.max_size() << std::endl;
 	std::cout << "Capacity:  " << vec.capacity() << std::endl;
+}
+template<typename it> void print(it begin, it end)
+{
+	for (; begin != end; ++begin)std::cout << *begin << tab; std::cout << std::endl;
 }
