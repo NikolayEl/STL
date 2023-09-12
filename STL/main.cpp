@@ -141,17 +141,22 @@ void main()
 	std::cout << "Enter index added value: "; std::cin >> index;
 	std::cout << "Enter added value: "; std::cin >> value;
 
-	std::forward_list<int>::iterator it;
-	if (index == 0) forward_list.push_front(value);
-	else
+	std::forward_list<int>::iterator it = forward_list.before_begin();
+
+	//1) Способ первый через вычесление размера списка
+	for (int i = 0; i < (index < size ? index: size); i++, ++it); //Если index больше размера списка, вставляем в конец списка
+	forward_list.insert_after(it, value);
+
+	//2) Через next, которая возвращает значение, которое будет следующим
+	// Такой способ считаю приоритетнее, потому, что проходить список буду только 1 раз (список может быть огромным)!
+	int count = 0;
+	for (it = forward_list.before_begin(); std::next(it) != forward_list.end(); ++it, count++)
 	{
-		int count = 0;
-		for (it = forward_list.before_begin(); it != forward_list.end(); ++it, count++)
-		{
-			if (count == (index < size? index: size)) break; //Условие потому что если индекс больше размера списка, дойдем до end(nullptr)
-		}
-		forward_list.insert_after(it, value);
+		if (count == index) break;
 	}
+	forward_list.insert_after(it, value);
+
+	
 
 	print(forward_list.cbegin(), forward_list.cend());
 	std::cout << delimitr;
