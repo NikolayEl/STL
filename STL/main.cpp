@@ -15,7 +15,7 @@ template<typename it> int size_forward_list(it begin, it end);
 //#define STL_ARRAY
 //#define STL_VECTOR
 //#define STL_LIST
-#define STL_FORWARD_LIST
+//#define STL_FORWARD_LIST
 void main()
 {
 	setlocale(LC_ALL, "");
