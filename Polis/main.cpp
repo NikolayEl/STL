@@ -23,6 +23,11 @@ class Crime
 public:
 	int get_id() const {return id;}
 
+	const std::string get_crime(int id, const std::map<int, std::string>& CRIMES)
+	{
+		return CRIMES.at(get_id());
+	}
+
 	const std::string& get_place() const { return place;}
 
 	void set_id(int id) {if (id > CRIMES.size()) id = 0; this->id = id;}
@@ -34,14 +39,9 @@ public:
 	~Crime(){}
 };
 
-std::ostream& operator<<(std::ostream& os, const Crime& obj)
+std::ostream& operator<<(std::ostream& os, Crime& obj)
 {
-	return os << obj.get_id() << "\t" << obj.get_place();
-}
-std::ostream& operator<<(std::ostream& os, const std::map<int, std::string>& CRIMES)
-
-{
-	return os << obj.get_id() << "\t" << obj.get_place();
+	return os << obj.get_crime(obj.get_id(), CRIMES) << tab << (obj.get_crime(obj.get_id(), CRIMES).size() < 22? tab:"") << obj.get_place();
 }
 
 void main()
@@ -54,7 +54,6 @@ void main()
 		{"k231cc", {Crime(5, "ул. Карла Маркса"), Crime(6, "ул. Карла Маркса")}},
 		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Пролетарская")}},
 	};
-
 	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
 	{
 		std::cout << it->first << ":" << std::endl;
@@ -62,4 +61,5 @@ void main()
 		for (std::list<Crime>::iterator l_it = it->second.begin(); l_it != it->second.end(); ++l_it) std::cout << tab << *l_it << "\t" << std::endl;
 		std::cout << std::endl << std::endl;
 	}
+	std::cout << CRIMES.at(1) << std::endl;
 }
