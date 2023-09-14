@@ -22,10 +22,10 @@ const std::map<int, std::string> CRIMES =
 class Crime;
 
 template<typename it> void print(it begin, it end);
-void add(std::map<std::string, std::list<Crime>>& base, std::string& number_of_auto, int number_of_crime, std::string& street);
+void add(std::map<std::string, std::list<Crime>>& base, const std::string& number_of_auto, const int number_of_crime, const std::string& street);
 template<typename it>void save(it begin, it end, std::string& file_name);
 void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name);
-std::list<class Crime, class std::allocator<class Crime>> operator+(std::list<class Crime, class std::allocator<class Crime>> pLeft, Crime pRight);
+std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight);
 
 
 class Crime
@@ -69,7 +69,7 @@ void main()
 		{"k231cc", {Crime(5, "ул. Карла Маркса"), Crime(6, "ул. Карла Маркса")}},
 		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Пролетарская")}},
 	};
-	base.insert({ "m776ab", { Crime(1, "ул. Ленина"), Crime(2, "ул. Ленина"), Crime(4, "ул. Парижской комунны") } });
+
 #ifdef CHEK_PRINT_MAIN
 	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
 	{
@@ -80,20 +80,25 @@ void main()
 	}
 #endif // CHEK_PRINT_MAIN
 
-	std::string file_name = "base_crime.csv";
+	//-----------------------------------SAVE-----------------------------
 	print(base.cbegin(), base.cend());
+	std::string file_name = "base_crime.csv";
 	save(base.cbegin(), base.cend(), file_name);
 	std::cout << delimetr;
 
+	//-----------------------------------LOAD-----------------------------
 	std::map<std::string, std::list<Crime>> exam;
 	load(exam, file_name);
-	//std::string number_of_auto, street;
-	//int number_of_crime;
-	//std::cout << "Введите гос номер правонарушителя образец (a111aa):"; std::cin >> number_of_auto;
-	//std::cout << "Введите номер правонарушения из базы:"; std::cin >> number_of_crime;
-	//std::cout << "Введите название улицы - места происшествия образец(Ленина):"; std::cin >> street;
-	//add(base, number_of_auto, number_of_crime, street);
 	print(exam.cbegin(), exam.cend());
+
+	//-----------------------------------ADD-------------------------------
+	std::string number_of_auto, street;
+	int number_of_crime;
+	std::cout << "Введите гос номер правонарушителя образец (a111aa):"; std::cin >> number_of_auto;
+	std::cout << "Введите номер правонарушения из базы:"; std::cin >> number_of_crime;
+	std::cout << "Введите название улицы - места происшествия образец(Ленина):"; std::cin >> street;
+	add(base, number_of_auto, number_of_crime, street);
+	print(base.cbegin(), base.cend());
 
 }
 template<typename it> void print(it begin, it end)
@@ -143,22 +148,25 @@ void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name)
 				l += 2;
 			}
 		}
+		fin.close();
 	}
 	else std::cerr << "Error: file not found" << std::endl;
 }
-void add(std::map<std::string, std::list<Crime>>& base, std::string& number_of_auto, int number_of_crime, std::string& street)
+void add(std::map<std::string, std::list<Crime>>& base, const std::string& number_of_auto, const int number_of_crime, const std::string& street)
 {
 	std::map<std::string, std::list<Crime>>::iterator it = base.find(number_of_auto);
-	if (it != base.end())
+	if (it != base.end()) 
 	{
-		//Crime temp = { number_of_crime, street };
-		base.at(number_of_auto) = it->second + Crime(number_of_crime, "ул. " + street);
+		base.at(number_of_auto) = it->second + Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street));
 	}
-	else base.insert({ number_of_auto, {Crime(number_of_crime, "ул. " + street)} });
+	else
+	{
+		base.insert({ number_of_auto, {Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street))} });
+	}
 }
-std::list<class Crime, class std::allocator<class Crime>> operator+(std::list<class Crime, class std::allocator<class Crime>> pLeft, Crime pRight)
+std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight)
 {
-	std::list<class Crime, class std::allocator<class Crime>>::iterator it = pLeft.begin();
-	pLeft.insert(it, pRight);
-	return pLeft;
+	std::list<class Crime, class std::allocator<class Crime>> temp = pLeft;
+	temp.push_back(pRight);
+	return temp;
 }
