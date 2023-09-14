@@ -16,6 +16,9 @@ const std::map<int, std::string> CRIMES =
 	{7, "Ремень безопасности"},
 };
 
+template<typename it> void print(it begin, it end);
+
+
 class Crime
 {
 	int id; //статья
@@ -54,12 +57,21 @@ void main()
 		{"k231cc", {Crime(5, "ул. Карла Маркса"), Crime(6, "ул. Карла Маркса")}},
 		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Пролетарская")}},
 	};
-	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
+	//for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
+	//{
+	//	std::cout << it->first << ":" << std::endl;
+	//	//for (Crime i : it->second) std::cout << i << "\t";
+	//	for (std::list<Crime>::iterator l_it = it->second.begin(); l_it != it->second.end(); ++l_it) std::cout << tab << *l_it << "\t" << std::endl;
+	//	std::cout << std::endl << std::endl;
+	//}
+	print(base.cbegin(), base.cend());
+}
+template<typename it> void print(it begin, it end)
+{
+	for (;	begin != end; ++begin)
 	{
-		std::cout << it->first << ":" << std::endl;
-		//for (Crime i : it->second) std::cout << i << "\t";
-		for (std::list<Crime>::iterator l_it = it->second.begin(); l_it != it->second.end(); ++l_it) std::cout << tab << *l_it << "\t" << std::endl;
+		std::cout << begin->first << ":" << std::endl;
+		for (Crime i : begin->second) std::cout << tab << i << tab << std::endl;
 		std::cout << std::endl << std::endl;
 	}
-	std::cout << CRIMES.at(1) << std::endl;
 }
