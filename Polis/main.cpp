@@ -1,6 +1,7 @@
 ﻿#include<iostream>
 #include<map>
 #include<list>
+#include<fstream>
 
 #define tab "\t"
 
@@ -17,6 +18,7 @@ const std::map<int, std::string> CRIMES =
 };
 
 template<typename it> void print(it begin, it end);
+template<typename it>void save(it begin, it end, std::string& file_name);
 
 
 class Crime
@@ -47,6 +49,8 @@ std::ostream& operator<<(std::ostream& os, Crime& obj)
 	return os << obj.get_crime(obj.get_id(), CRIMES) << tab << (obj.get_crime(obj.get_id(), CRIMES).size() < 22? tab:"") << obj.get_place();
 }
 
+//#define CHEK_PRINT_MAIN
+
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -57,14 +61,19 @@ void main()
 		{"k231cc", {Crime(5, "ул. Карла Маркса"), Crime(6, "ул. Карла Маркса")}},
 		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Пролетарская")}},
 	};
-	//for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
-	//{
-	//	std::cout << it->first << ":" << std::endl;
-	//	//for (Crime i : it->second) std::cout << i << "\t";
-	//	for (std::list<Crime>::iterator l_it = it->second.begin(); l_it != it->second.end(); ++l_it) std::cout << tab << *l_it << "\t" << std::endl;
-	//	std::cout << std::endl << std::endl;
-	//}
+#ifdef CHEK_PRINT_MAIN
+	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
+	{
+		std::cout << it->first << ":" << std::endl;
+		//for (Crime i : it->second) std::cout << i << "\t";
+		for (std::list<Crime>::iterator l_it = it->second.begin(); l_it != it->second.end(); ++l_it) std::cout << tab << *l_it << "\t" << std::endl;
+		std::cout << std::endl << std::endl;
+	}
+#endif // CHEK_PRINT_MAIN
+
+	std::string file_name = "base_crime.csv";
 	print(base.cbegin(), base.cend());
+	save(base.cbegin(), base.cend(), file_name);
 }
 template<typename it> void print(it begin, it end)
 {
@@ -74,4 +83,16 @@ template<typename it> void print(it begin, it end)
 		for (Crime i : begin->second) std::cout << tab << i << tab << std::endl;
 		std::cout << std::endl << std::endl;
 	}
+}
+template<typename it>void save(it begin, it end, std::string& file_name)
+{
+	std::ofstream out;
+	out.open(file_name, std::ios_base::trunc);
+	for (; begin != end; ++begin)
+	{
+		out << begin->first << ";";
+		for (Crime i : begin->second) out << i.get_id() << ";" << i.get_place() << ";";
+		out << std::endl;
+	}
+	out.close();
 }
