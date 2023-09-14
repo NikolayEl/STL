@@ -3,7 +3,6 @@
 #include<list>
 #include<fstream>
 #include<string>
-#include <locale.h>
 
 #define tab "\t"
 #define delimetr "\n------------------------------------------------------------------------------------------------------\n"
