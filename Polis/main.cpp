@@ -23,7 +23,7 @@ class Crime;
 template<typename it> void print(it begin, it end);
 std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::list<Crime>>& base, 
 	const std::string& number_of_auto, const int number_of_crime, const std::string& street);
-template<typename it>void save(it begin, it end, std::string& file_name);
+template<typename it>void save(it begin, it end, const std::string& file_name);
 std::map<std::string, std::list<Crime>> load(const std::map<std::string, std::list<Crime>>& base, std::string& file_name);
 std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight);
 
@@ -54,6 +54,15 @@ public:
 std::ostream& operator<<(std::ostream& os, Crime& obj)
 {
 	return os << obj.get_crime(obj.get_id(), CRIMES) << tab << (obj.get_crime(obj.get_id(), CRIMES).size() < 22? tab:"") << obj.get_place();
+}
+//std::ostream& operator<<(std::ostream& os, Crime& obj)  //code with OA
+//{
+//	return os << CRIMES.at(obj.get_id()) << tab << (obj.get_crime(obj.get_id(), CRIMES).size() < 22 ? tab : "") << obj.get_place();
+//}
+std::ofstream& operator<<(std::ofstream& ofs, const Crime& obj)
+{
+	ofs << obj.get_id() << " " << obj.get_place();
+	return ofs;
 }
 
 //#define CHEK_PRINT_MAIN
@@ -113,7 +122,7 @@ template<typename it> void print(it begin, it end)
 		std::cout << std::endl << std::endl;
 	}
 }
-template<typename it>void save(it begin, it end, std::string& file_name)
+template<typename it>void save(it begin, it end, const std::string& file_name)
 {
 	std::ofstream fout;
 	fout.open(file_name, std::ios_base::trunc);
