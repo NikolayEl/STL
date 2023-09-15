@@ -21,7 +21,8 @@ const std::map<int, std::string> CRIMES =
 class Crime;
 
 template<typename it> void print(it begin, it end);
-void add(std::map<std::string, std::list<Crime>>& base, const std::string& number_of_auto, const int number_of_crime, const std::string& street);
+std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::list<Crime>>& base, 
+	const std::string& number_of_auto, const int number_of_crime, const std::string& street);
 template<typename it>void save(it begin, it end, std::string& file_name);
 void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name);
 std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight);
@@ -96,7 +97,7 @@ void main()
 	std::cout << "Введите гос номер правонарушителя образец (a111aa):"; std::cin >> number_of_auto;
 	std::cout << "Введите номер правонарушения из базы:"; std::cin >> number_of_crime;
 	std::cout << "Введите название улицы - места происшествия образец(Ленина):"; std::cin >> street;
-	add(base, number_of_auto, number_of_crime, street);
+	base = add(base, number_of_auto, number_of_crime, street);
 	print(base.cbegin(), base.cend());
 
 }
@@ -151,17 +152,20 @@ void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name)
 	}
 	else std::cerr << "Error: file not found" << std::endl;
 }
-void add(std::map<std::string, std::list<Crime>>& base, const std::string& number_of_auto, const int number_of_crime, const std::string& street)
+std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::list<Crime>>& base, 
+	const std::string& number_of_auto, const int number_of_crime, const std::string& street)
 {
-	std::map<std::string, std::list<Crime>>::iterator it = base.find(number_of_auto);
-	if (it != base.end()) 
+	std::map<std::string, std::list<Crime>> temp = base;
+	std::map<std::string, std::list<Crime>>::iterator it = temp.find(number_of_auto);
+	if (it != temp.end()) 
 	{
-		base.at(number_of_auto) = it->second + Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street));
+		temp.at(number_of_auto) = it->second + Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street));
 	}
 	else
 	{
-		base.insert({ number_of_auto, {Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street))} });
+		temp.insert({ number_of_auto, {Crime(number_of_crime, (street.substr(0, 1) != "ул" ? "ул. " + street : street))} });
 	}
+	return temp;
 }
 std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight)
 {
