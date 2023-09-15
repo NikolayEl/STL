@@ -24,7 +24,7 @@ template<typename it> void print(it begin, it end);
 std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::list<Crime>>& base, 
 	const std::string& number_of_auto, const int number_of_crime, const std::string& street);
 template<typename it>void save(it begin, it end, std::string& file_name);
-void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name);
+std::map<std::string, std::list<Crime>> load(const std::map<std::string, std::list<Crime>>& base, std::string& file_name);
 std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight);
 
 
@@ -81,17 +81,20 @@ void main()
 #endif // CHEK_PRINT_MAIN
 
 	//-----------------------------------SAVE-----------------------------
+	std::cout << "CHEK_SAVE_FUNCTION:" << std::endl;
 	print(base.cbegin(), base.cend());
 	std::string file_name = "base_crime.csv";
 	save(base.cbegin(), base.cend(), file_name);
 	std::cout << delimetr;
 
 	//-----------------------------------LOAD-----------------------------
+	std::cout << "CHEK_LOAD_FUNCTION:" << std::endl;
 	std::map<std::string, std::list<Crime>> exam;
-	load(exam, file_name);
+	exam = load(base, file_name);
 	print(exam.cbegin(), exam.cend());
 
 	//-----------------------------------ADD-------------------------------
+	std::cout << "CHEK_ADD_FUNCTION:" << std::endl;
 	std::string number_of_auto, street;
 	int number_of_crime;
 	std::cout << "Введите гос номер правонарушителя образец (a111aa):"; std::cin >> number_of_auto;
@@ -122,8 +125,9 @@ template<typename it>void save(it begin, it end, std::string& file_name)
 	}
 	fout.close();
 }
-void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name)
+std::map<std::string, std::list<Crime>> load(const std::map<std::string, std::list<Crime>>& base, std::string& file_name)
 {
+	std::map<std::string, std::list<Crime>> temp = base;
 	std::ifstream fin;
 	fin.open(file_name);
 	if (fin.is_open())
@@ -144,13 +148,14 @@ void load(std::map<std::string, std::list<Crime>>& base, std::string& file_name)
 			int l = 1;
 			while (token[l] != "")
 			{
-				add(base, token[0], std::stoi(token[l]), token[l + 1]);
+				add(temp, token[0], std::stoi(token[l]), token[l + 1]);
 				l += 2;
 			}
 		}
 		fin.close();
 	}
 	else std::cerr << "Error: file not found" << std::endl;
+	return temp;
 }
 std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::list<Crime>>& base, 
 	const std::string& number_of_auto, const int number_of_crime, const std::string& street)
