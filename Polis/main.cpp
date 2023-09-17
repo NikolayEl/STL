@@ -26,7 +26,7 @@ std::map<std::string, std::list<Crime>> add(const std::map<std::string, std::lis
 template<typename it>void save(it begin, it end, const std::string& file_name);
 std::map<std::string, std::list<Crime>> load(const std::map<std::string, std::list<Crime>>& base, std::string& file_name);
 std::list<class Crime, class std::allocator<class Crime>> operator+(const std::list<class Crime, class std::allocator<class Crime>>& pLeft, const Crime& pRight);
-
+void print_car_number(const std::map<std::string, std::list<Crime>>& base, const std::string& with_number);
 
 class Crime
 {
@@ -66,6 +66,9 @@ std::ofstream& operator<<(std::ofstream& ofs, const Crime& obj)
 }
 
 //#define CHEK_PRINT_MAIN
+//#define CHEK_SAVE
+//#define CHEK_LOAD
+//#define CHEK_ADD
 
 void main()
 {
@@ -76,7 +79,13 @@ void main()
 	{
 		{"m777ab", {Crime(1, "ул. Ленина"), Crime(2, "ул. Ленина"), Crime(4, "ул. Парижской комунны")}},
 		{"k231cc", {Crime(5, "ул. Карла Маркса"), Crime(6, "ул. Карла Маркса")}},
-		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Пролетарская")}},
+		{"k232cc", {Crime(3, "ул. Серетенский бульвар"), Crime(4, "ул. Байкальская")}},
+		{"k233cc", {Crime(2, "ул. Кузнечный мост"), Crime(2, "ул. Полянка")}},
+		{"k240cc", {Crime(4, "ул. Арбат"), Crime(7, "ул. Старый Арбат")}},
+		{"k240ck", {Crime(1, "ул. Декабрьских Событий"), Crime(2, "ул. Ново-разводная")}},
+		{"l240cc", {Crime(6, "ул. Советская"), Crime(3, "ул. пер. Ландышева")}},
+		{"m240cc", {Crime(7, "ул. Подаптечная"), Crime(1, "ул. Житницкая")}},
+		{"p441oc", {Crime(3, "ул. Пролетарская"), Crime(7, "ул. Стародворье")}},
 	};
 
 #ifdef CHEK_PRINT_MAIN
@@ -89,12 +98,16 @@ void main()
 	}
 #endif // CHEK_PRINT_MAIN
 
+#ifdef CHEK_SAVE
 	//-----------------------------------SAVE-----------------------------
 	std::cout << "CHEK_SAVE_FUNCTION:" << std::endl;
 	print(base.cbegin(), base.cend());
 	std::string file_name = "base_crime.csv";
 	save(base.cbegin(), base.cend(), file_name);
 	std::cout << delimetr;
+#endif // CHEK_SAVE
+
+#ifdef CHEK_LOAD
 
 	//-----------------------------------LOAD-----------------------------
 	std::cout << "CHEK_LOAD_FUNCTION:" << std::endl;
@@ -102,6 +115,9 @@ void main()
 	exam = load(base, file_name);
 	print(exam.cbegin(), exam.cend());
 
+#endif // CHEK_LOAD
+
+#ifdef CHEK_ADD
 	//-----------------------------------ADD-------------------------------
 	std::cout << "CHEK_ADD_FUNCTION:" << std::endl;
 	std::string number_of_auto, street;
@@ -111,6 +127,15 @@ void main()
 	std::cout << "Введите название улицы - места происшествия образец(Ленина):"; std::cin >> street;
 	base = add(base, number_of_auto, number_of_crime, street);
 	print(base.cbegin(), base.cend());
+#endif // CHEK_ADD
+
+
+	//----------------------------------PRINT NUMBER-----------------------
+	print(base.cbegin(), base.cend());
+	std::string with_number;
+	std::cout << "Введите гос номер правонарушителя образец (a111aa) или список номеров" << std::endl;
+		std::cout << " - образец(a111aa - b222bb от меньшего к большему) :"; std::cin >> with_number;
+	print_car_number(base, with_number);
 
 }
 template<typename it> void print(it begin, it end)
@@ -186,4 +211,74 @@ std::list<class Crime, class std::allocator<class Crime>> operator+(const std::l
 	std::list<class Crime, class std::allocator<class Crime>> temp = pLeft;
 	temp.push_back(pRight);
 	return temp;
+}
+void print_car_number(const std::map<std::string, std::list<Crime>>& base, const std::string& with_number)
+{
+	std::map<std::string, std::list<Crime>>::const_iterator it;
+	if (with_number.size() < 7)
+	{
+		it = base.find(with_number);
+		if (it != base.end())
+		{
+			std::cout << it->first << ":" << std::endl;
+			for (Crime i : it->second) std::cout << tab << CRIMES.at(i.get_id()) << tab << i.get_place() << std::endl;
+		}
+		else std::cerr << "Number not found" << std::endl;
+		
+	}
+	else
+	{
+		if (with_number.size() > 13)
+		{
+			std::cerr << "Вы ввели не правильный интервал, образец - a111aa-c333cc" << std::endl;
+			return;
+		}
+		unsigned temp[14];
+		for (int i = 0; i <= with_number.size(); i++)
+		{
+			temp[i] = static_cast<unsigned>(static_cast<unsigned char>(with_number[i]));
+		}
+		for (it = base.begin(); it != base.end(); ++it)
+		{
+			bool exam;
+			unsigned temp_number[6];
+			for (int k = 0; k < it->first.size(); k++)
+			{
+				temp_number[k] = static_cast<unsigned>(static_cast<unsigned char>(it->first[k]));
+			}
+			for (int k = 0; k < it->first.size(); k++)
+			{
+				exam = false;
+				if (it->first == with_number.substr(0, 6) || it->first == with_number.substr(7, 6))
+				{
+					exam = true;
+					break;
+				}
+				if (temp_number[k] > temp[k] && temp_number[k] < temp[k + 7])
+				{
+					if (temp_number[0] <= temp[7])
+					{
+						exam = true;
+						break;
+					}
+					else continue;
+				}
+				else if (temp_number[k] == temp[k] || temp_number[k] == temp[k+7])
+				{
+					if (temp_number[0] <= temp[7])
+					{
+						exam = true;
+						continue;
+					}
+					else break;
+				}
+				else break;
+			}
+			if (exam)
+			{
+				std::cout << it->first << ":" << std::endl;
+				for (Crime i : it->second) std::cout << tab << CRIMES.at(i.get_id()) << tab << i.get_place() << std::endl;
+			}
+		}
+	}
 }
