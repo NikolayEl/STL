@@ -215,18 +215,20 @@ std::list<class Crime, class std::allocator<class Crime>> operator+(const std::l
 void print_car_number(const std::map<std::string, std::list<Crime>>& base, const std::string& with_number)
 {
 	std::map<std::string, std::list<Crime>>::const_iterator it;
+	std::map<std::string, std::list<Crime>>::const_iterator beg = base.find(with_number.substr(0, 6));
+	std::map<std::string, std::list<Crime>>::const_iterator ended = base.find(with_number.substr(7, 6));
 	if (with_number.size() < 7)
 	{
 		it = base.find(with_number);
-		if (it != base.end())
-		{
-			std::cout << it->first << ":" << std::endl;
-			for (Crime i : it->second) std::cout << tab << CRIMES.at(i.get_id()) << tab << i.get_place() << std::endl;
-		}
+		if (it != base.end()) print(it, it);
 		else std::cerr << "Number not found" << std::endl;
 		
 	}
-	else
+	else if (beg != base.end() && ended != base.end())
+	{
+		print(beg, ended);
+	}
+	else //Если один из введенных номеров не найден в базе, то начинается проверка диапазона номеров
 	{
 		if (with_number.size() > 13)
 		{
@@ -240,7 +242,7 @@ void print_car_number(const std::map<std::string, std::list<Crime>>& base, const
 		}
 		for (it = base.begin(); it != base.end(); ++it)
 		{
-			bool exam;
+			bool exam = false;
 			unsigned temp_number[6];
 			for (int k = 0; k < it->first.size(); k++)
 			{
@@ -248,26 +250,20 @@ void print_car_number(const std::map<std::string, std::list<Crime>>& base, const
 			}
 			for (int k = 0; k < it->first.size(); k++)
 			{
-				exam = false;
 				if (it->first == with_number.substr(0, 6) || it->first == with_number.substr(7, 6))
 				{
 					exam = true;
 					break;
 				}
-				if (temp_number[k] > temp[k] && temp_number[k] < temp[k + 7])
+				if (temp_number[k] > temp[k] && temp_number[0] <= temp[7])
 				{
-					if (temp_number[0] <= temp[7])
-					{
-						exam = true;
-						break;
-					}
-					else continue;
+					exam = true;
+					break;
 				}
 				else if (temp_number[k] == temp[k] || temp_number[k] == temp[k+7])
 				{
 					if (temp_number[0] <= temp[7])
 					{
-						exam = true;
 						continue;
 					}
 					else break;
