@@ -215,8 +215,10 @@ std::list<class Crime, class std::allocator<class Crime>> operator+(const std::l
 void print_car_number(const std::map<std::string, std::list<Crime>>& base, const std::string& with_number)
 {
 	std::map<std::string, std::list<Crime>>::const_iterator it;
-	std::map<std::string, std::list<Crime>>::const_iterator beg = base.find(with_number.substr(0, 6));
-	std::map<std::string, std::list<Crime>>::const_iterator ended = base.find(with_number.substr(7, 6));
+	std::map<std::string, std::list<Crime>>::const_iterator beg;
+	if(with_number.size() > 7) beg = base.find(with_number.substr(0, 6));
+	std::map<std::string, std::list<Crime>>::const_iterator ended;
+	if (with_number.size() > 7) ended = base.find(with_number.substr(7, 6));
 	if (with_number.size() < 7)
 	{
 		it = base.find(with_number);
